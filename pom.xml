@@ -12,7 +12,7 @@
         <module>dms-lucene</module>
         <module>dms-web-controller</module>
         <module>dms-auth</module>
-        <module>dms-app-all</module>a
+        <module>dms-app-all</module>
     </modules>
     <groupId>com.bzdgs</groupId>
     <artifactId>dms</artifactId>
