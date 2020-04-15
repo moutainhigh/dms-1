@@ -2,16 +2,12 @@ package com.bzdgs.dms.mapper;
 
 import com.bzdgs.dms.domain.Employee;
 import com.bzdgs.dms.query.EmployeeQuery;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-/**
- * @Description desc
- * @Author lq
- * @Date new Date()
- * @Version v1.0
- **/
 
+@Mapper
 public interface EmployeeMapper extends BaseMapper<Employee> {
 
     List<Employee> findAll();

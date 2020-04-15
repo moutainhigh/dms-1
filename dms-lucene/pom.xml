@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.bzdgs</groupId>
+            <artifactId>dms-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
             <artifactId>dms-mapper</artifactId>
         </dependency>
         <!-- 导入Lucene所需要的包-->

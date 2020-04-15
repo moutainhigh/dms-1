@@ -2,9 +2,10 @@ package com.bzdgs.dms.mapper;
 
 import com.bzdgs.dms.domain.Docinfo;
 import com.bzdgs.dms.query.DocinfoQuery;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
+@Mapper
 public interface DocinfoMapper extends BaseMapper<Docinfo> {
     /**
      * 查询事故档案

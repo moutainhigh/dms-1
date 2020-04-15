@@ -1,9 +1,8 @@
 package com.bzdgs.dms.mapper;
 
 import com.bzdgs.dms.domain.SystemConfig;
+import org.apache.ibatis.annotations.Mapper;
 
-/**
- * @Author Wcy
- */
+@Mapper
 public interface SystemConfigMapper extends BaseMapper<SystemConfig> {
 }

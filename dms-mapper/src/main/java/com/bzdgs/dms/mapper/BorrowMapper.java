@@ -1,15 +1,12 @@
 package com.bzdgs.dms.mapper;
 
-
-
-
-
 import com.bzdgs.dms.domain.Borrow;
 import com.bzdgs.dms.domain.Docinfo;
 import com.bzdgs.dms.query.BorrowQuery;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
+@Mapper
 public interface BorrowMapper extends BaseMapper<Borrow> {
 
     /**

@@ -1,9 +1,9 @@
 package com.bzdgs.dms.lucene;
 
-
 import com.bzdgs.dms.domain.Docinfo;
 import com.bzdgs.dms.query.DocinfoQuery;
 import com.bzdgs.dms.util.PageList;
+
 
 import java.util.List;
 
