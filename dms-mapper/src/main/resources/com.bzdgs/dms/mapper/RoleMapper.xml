@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bzdgs.dms.mapper.RoleMapper">
+
+    <select id="count1" resultType="java.lang.Long">
+        SELECT count(*) FROM t_role r
+        <include refid="whereSql"/>
+    </select>
+
+    <!--映射-->
+    <resultMap id="RoleMap" type="com.bzdgs.dms.domain.Role">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sn" column="sn"/>
+        <result property="permission_id" column="permission_id"/>
+        <collection property="permissions" select="permissionsList" column="id">
+
+        </collection>
+    </resultMap>
+
+    <select id="selectByQuery" resultMap="RoleMap">
+        SELECT r.* FROM
+        t_role r
+        <include refid="whereSql"/>
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="permissionsList" resultType="com.bzdgs.dms.domain.Permission">
+        SELECT p.* FROM t_permission p
+        LEFT JOIN t_role_permission rp  ON p.id=rp.permission_id
+        where rp.role_id=#{id}
+    </select>
+
+    <sql id="whereSql">
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                AND (
+                name like concat('%',#{keyword},'%')
+                or
+                Tenant like concat('%',#{keyword},'%')
+                )
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectById" resultType="com.bzdgs.dms.domain.Role">
+        SELECT * FROM t_role WHERE id=#{id}
+    </select>
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.Role">
+        SELECT * FROM t_role;
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_role
+            (
+                sn,
+                name,
+                permission_id
+            )
+            VALUES
+            (
+                #{sn},
+                #{name},
+                #{permission_id}
+            )
+
+    </insert>
+
+    <update id="updateById">
+        UPDATE t_role SET
+                sn=#{sn},
+                name=#{name}
+             WHERE id=#{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM t_role WHERE id=#{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.DocinfoMapper">
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_docInfo
+        <include refid="wheresql"/>
+    </select>
+
+    <resultMap id="doctype" type="com.bzdgs.dms.domain.Docinfo">
+        <result column="tid" property="doctype.id"></result>
+        <result column="tname" property="doctype.name"></result>
+        <result column="tsn" property="doctype.sn"></result>
+        <result column="tdesc" property="doctype.desc"></result>
+        <result column="address" property="docaddress.address"></result>
+    </resultMap>
+
+    <!-- 用于全文检索-->
+    <select id="selectForLucene" resultMap="doctype">
+        SELECT d.* ,t.id tid,t.name tname,t.sn tsn,t.desc tdesc,a.address
+        FROM t_docInfo d LEFT JOIN t_doctype t ON d.docType_id=t.id
+        LEFT join t_docAddress a ON d.docAddress_id=a.id
+    </select>
+
+
+    <!--查询所有带高级查询和分页-->
+    <select id="selectByQuery" resultMap="doctype">
+
+        SELECT d.* ,t.id tid,t.name tname,t.sn tsn,t.desc tdesc,a.address
+        FROM t_docInfo d LEFT JOIN t_doctype t ON d.docType_id=t.id
+        LEFT join t_docAddress a ON d.docAddress_id=a.id
+        <include refid="wheresql"/>
+        limit #{start},#{pageSize}
+
+    </select>
+    <!--通过sn查询所有-->
+    <select id="selectByDocsn" resultMap="doctype">
+
+        SELECT d.* ,t.id tid,t.name tname,t.sn tsn,t.desc tdesc,a.address
+        FROM t_docInfo d LEFT JOIN t_doctype t ON d.docType_id=t.id
+        LEFT join t_docAddress a ON d.docAddress_id=a.id
+        WHERE d.docSn LIKE concat('%',#{keyword},'%')
+        limit #{start},#{pageSize}
+
+    </select>
+
+
+
+    <!--查询所有无条件-->
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT * FROM t_docInfo
+    </select>
+
+    <!--查询所有不分页-->
+    <select id="selectAllByQuery" resultType="com.bzdgs.dms.domain.Docinfo">
+      SELECT * FROM t_docInfo
+        <include refid="wheresql"/>
+    </select>
+
+    <select id="list" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT * FROM t_docInfo WHERE status = '-3' OR status = '-5'
+    </select>
+    <select id="docs" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT * FROM t_docInfo WHERE status = '0'
+    </select>
+    <select id="missed" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT * FROM t_docInfo WHERE status = '-4'
+    </select>
+
+    <sql id="wheresql">
+        <where>
+            <if test="keyword !=null and keyword !=''">
+                docTitle like concat('%',#{keyword},'%')
+            </if>
+            <if test="doctypeId !=null">
+                docType_id = #{doctypeId}
+            </if>
+            <if test="status !=null">
+                status = #{status}
+            </if>
+            <if test="beginTime!=null and beginTime!=''">
+                <![CDATA[   and DATE_FORMAT(createDate, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                <![CDATA[  and DATE_FORMAT(createDate, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')    ]]>
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="selectById" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT * FROM t_docInfo WHERE id = #{id}
+    </select>
+
+    <!-- 到期查询的 SQL -->
+    <select id="selectForExpired" resultMap="doctype">
+        SELECT d.* ,t.id tid,t.name tname,t.sn tsn,t.desc tdesc,a.address
+        FROM t_docInfo d LEFT JOIN t_doctype t ON d.docType_id=t.id
+        LEFT join t_docAddress a ON d.docAddress_id=a.id
+        <include refid="expiredSql"/>
+        limit #{start},#{pageSize}
+    </select>
+    <sql id="expiredSql">
+        <where>
+            <if test="expiredTime != null">
+                AND d.outDate  - NOW() &lt; #{expiredTime}
+            </if>
+        </where>
+    </sql>
+
+    <insert id="insert">
+        INSERT INTO t_docInfo (
+        docSn,
+        docType_id,
+        docAddress_id,
+        docTitle,
+        createUser_id,
+        createDate,
+        editUser_id,
+        editDate,
+        borrowStatus_id,
+        outDate,
+        notice,
+        noticeDay,
+        docContent,
+        contentIntro,
+        isUsed,
+        docnum,
+        sendDept_id,
+        sendUnit_id,
+        sendUser,
+        piDate,
+        jianDate,
+        productSn,
+        mateSn,
+        proNum,
+        pageCount,
+        patentNum,
+        inspectUser_id,
+        status
+        ) VALUES (
+        #{docSn},
+        #{docType_id},
+        #{docAddress_id},
+        #{docTitle},
+        #{createUser_id},
+        #{createDate},
+        #{editUser_id},
+        #{editDate},
+        #{borrowStatus_id},
+        #{outDate},
+        #{notice},
+        #{noticeDay},
+        #{docContent},
+        #{contentIntro},
+        #{isUsed},
+        #{docnum},
+        #{sendDept_id},
+        #{sendUnit_id},
+        #{sendUser},
+        #{piDate},
+        #{jianDate},
+        #{productSn},
+        #{mateSn},
+        #{proNum},
+        #{pageCount},
+        #{patentNum},
+        #{inspectUser_id},
+        #{status}
+        )
+    </insert>
+    <update id="update">
+        UPDATE t_docInfo SET
+        docSn = #{docSn},
+        docType_id = #{docType_id},
+        docAddress_id = #{docAddress_id},
+        docTitle = #{docTitle},
+        createUser_id = #{createUser_id},
+        createDate = #{createDate},
+        editUser_id = #{editUser_id},
+        editDate = #{editDate},
+        borrowStatus_id = #{borrowStatus_id},
+        outDate = #{outDate},
+        notice = #{notice},
+        noticeDay = #{noticeDay},
+        docContent = #{docContent},
+        contentIntro = #{contentIntro},
+        isUsed = #{isUsed},
+        docnum = #{docnum},
+        sendDept_id = #{sendDept_id},
+        sendUnit_id = #{sendUnit_id},
+        sendUser = #{sendUser},
+        piDate = #{piDate},
+        jianDate = #{jianDate},
+        productSn = #{productSn},
+        mateSn = #{mateSn},
+        proNum = #{proNum},
+        pageCount = #{pageCount},
+        patentNum = #{patentNum},
+        inspectUser_id = #{inspectUser_id},
+        status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" >
+        DELETE FROM t_docInfo WHERE id=#{id}
+    </delete>
+
+
+
+
+
+
+
+</mapper>

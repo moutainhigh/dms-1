@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.UserMapper">
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.User">
+        SELECT * FROM t_user
+    </select>
+
+    <select id="selectById" resultType="com.bzdgs.dms.domain.User" >
+        SELECT * FROM t_user WHERE id=#{id}
+    </select>
+
+    <insert id="insert" parameterType="com.bzdgs.dms.domain.User">
+        insert into t_user(username,password,realName,idCard,dept_id,hireDate,phoneNum,education_id,
+       address,gender,birthDate,comment,state)
+         VALUES (#{username},#{password},#{realName},#{idCard},#{dept_id},#{hireDate},
+         #{phoneNum},#{education_id},#{address},#{gender},#{birthDate},#{comment},#{state})
+    </insert>
+
+    <update id="update" parameterType="com.bzdgs.dms.domain.User">
+        UPDATE t_user SET username=#{username},password=#{password},realName=#{realName},idCard=#{idCard},
+        dept_id=#{dept_id},hireDate=#{hireDate},phoneNum=#{phoneNum},education_id=#{education_id},
+        address=#{address},gender=#{gender},birthDate=#{birthDate},comment=#{comment},state=#{state}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM t_user where id = #{id}
+    </delete>
+
+    <delete id="deleteBatch">
+
+        delete from t_user where id in
+        <foreach collection="list" open="(" item="id" separator="," close=")" >
+            #{id}
+        </foreach>
+
+    </delete>
+
+
+    <!--通过用户名查询-->
+    <select id="getByUsername"  resultType="com.bzdgs.dms.domain.User" >
+        SELECT * from t_user where username=#{username}
+    </select>
+
+
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_user u
+        <include refid="whereSql"/>
+    </select>
+
+    <select id="selectByQuery" resultMap="userMap">
+        SELECT
+        u.*,
+        d.id did,d.name dname,
+        e.id eid,e.name ename
+        FROM
+        t_user u
+        LEFT JOIN t_department d ON u.dept_id = d.id
+        left join t_education e on u.education_id=e.id
+        <include refid="whereSql"/>
+        LIMIT #{start},#{pageSize}
+    </select>
+    <resultMap id="userMap" type="com.bzdgs.dms.domain.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="realName" property="realName"/>
+        <result column="idCard" property="idCard"/>
+        <result column="hireDate" property="hireDate"/>
+        <result column="phoneNum" property="phoneNum"/>
+        <result column="address" property="address"/>
+        <result column="gender" property="gender"/>
+        <result column="comment" property="comment"/>
+        <result column="birthDate" property="birthDate"/>
+        <result column="state" property="state"/>
+        <result column="education_id" property="education_id"/>
+        <result column="dept_id" property="dept_id"/>
+
+        <association property="education" javaType="com.bzdgs.dms.domain.Education">
+            <!--先封装基本属性-->
+            <id column="eid" property="id"/>
+            <result column="ename"  property="name"/>
+        </association>
+
+        <association property="department" javaType="com.bzdgs.dms.domain.Department">
+            <!--先封装基本属性-->
+            <id column="did" property="id"/>
+            <result column="dname"  property="name"/>
+        </association>
+
+    </resultMap>
+
+
+    <sql id="whereSql">
+        <where>
+            <!--如果有其他条件继续拼接if-->
+            <if test="keyword!=null and keyword!=''">
+                AND (
+                username like concat('%',#{keyword},'%')
+                or
+                realName like concat('%',#{keyword},'%')
+                )
+            </if>
+            <if test="education_id!=null and education_id!=''">
+                AND education_id =#{education_id}
+            </if>
+            <if test="state!=''">
+               AND u.state =#{state}
+            </if>
+
+        </where>
+    </sql>
+
+
+    <update id="updatePassword">
+        update t_user set password=#{password} where id=#{id}
+    </update>
+</mapper>

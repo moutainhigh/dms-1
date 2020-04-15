@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.bzdgs.dms.mapper.Doc_Borrow_ReturnMapper">
+    <!-- 新增借阅表时 新增  中间表信息-->
+    <insert id="insert" parameterType="com.bzdgs.dms.domain.Doc_Borrow_Return">
+        INSERT INTO t_doc_return_borrow (
+        docId,
+        borrowId,
+        returnId
+        )VALUES (
+        #{docId},
+        #{borrowId},
+        #{returnId}
+        )
+    </insert>
+
+    <!-- 查询更新时 所需的 中间表id 根据档案id查询-->
+    <select id="selectDBRId" resultType="java.lang.Long">
+        SELECT id FROM t_doc_return_borrow WHERE docId = #{docId}
+        AND returnId IS NULL
+    </select>
+
+    <!-- 根据 借阅表id查询 所有对应档案id -->
+    <select id="selectDocId" resultType="java.lang.Long">
+        SELECT docId FROM  t_doc_return_borrow WHERE borrowId = #{borrowId}
+    </select>
+
+    <!-- 归还时  更新中间表信息 -->
+    <update id="updateMid" parameterType="list">
+        UPDATE t_doc_return_borrow
+        <trim suffixOverrides="," prefix="set">
+            <trim prefix="docId =case id" suffix="end,">
+                <foreach collection="list" item="item">
+                    when #{item.id} then #{item.docId}
+                </foreach>
+            </trim>
+            <trim prefix="borrowId =case id" suffix="end,">
+                <foreach collection="list" item="item">
+                    when #{item.id} then #{item.borrowId}
+                </foreach>
+            </trim>
+            <trim prefix="returnId =case id" suffix="end,">
+                <foreach collection="list" item="item">
+                    when #{item.id} then #{item.returnId}
+                </foreach>
+            </trim>
+        </trim>
+        <where>
+            id in (
+            <foreach collection="list" item="item" separator=",">
+              #{item.id}
+            </foreach>
+            )
+        </where>
+    </update>
+
+
+</mapper>

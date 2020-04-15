@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.FaultDocMapper">
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.FaultDoc">
+        SELECT * FROM t_faultDoc
+    </select>
+    <select id="selectById" resultType="com.bzdgs.dms.domain.FaultDoc" parameterType="long">
+        SELECT * FROM t_faultDoc WHERE id = #{id}
+    </select>
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_faultDoc
+        <include refid="wheresql"/>
+    </select>
+
+    <resultMap id="faultDocMap" type="com.bzdgs.dms.domain.FaultDoc">
+        <result column="did" property="docInfo.id"></result>
+        <result column="ddocSn" property="docInfo.docSn"></result>
+        <result column="uid" property="user.id"></result>
+        <result column="uusername" property="user.username"></result>
+        <result column="cid" property="dicDetail.id"></result>
+        <result column="cname" property="dicDetail.name"></result>
+    </resultMap>
+
+    <select id="selectByQuery" resultMap="faultDocMap">
+        SELECT
+        td.*,
+        d.id did,d.docSn ddocSn,
+        u.id uid,u.username uusername,
+        c.id cid,c.name cname
+        FROM
+        t_faultDoc td
+        LEFT JOIN t_docInfo d ON td.docInfo_id = d.id
+        LEFT JOIN t_user u ON td.user_id = u.id
+        LEFT JOIN t_dicDetail c ON td.dicDetail_id = c.id
+        <include refid="wheresql"/>
+        limit #{start},#{pageSize}
+    </select>
+
+    <sql id="wheresql">
+        <where>
+            <if test="startDate !=null">
+                AND <![CDATA[ faultDate >= #{startDate,jdbcType=DATE}]]>
+            </if>
+            <if test="endDate !=null">
+                AND <![CDATA[ faultDate <= #{endDate,jdbcType=DATE}]]>
+            </if>
+            <if test="dicDetail_id !=null">
+                AND dicDetail_id = #{dicDetail_id}
+            </if>
+        </where>
+    </sql>
+
+    <delete id="deleteById" >
+        DELETE from t_faultDoc where id=#{id}
+    </delete>
+
+
+    <update id="updateById">
+        update t_faultDoc set
+         docInfo_id=#{docInfo_id},
+         dicDetail_id=#{dicDetail_id},
+         user_id=#{user_id},
+         faultDate=#{faultDate},
+         des=#{des}
+         WHERE id = #{id}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO t_faultDoc (
+            docInfo_id,
+            dicDetail_id,
+            user_id,
+            faultDate,
+            des
+        ) VALUES (
+            #{docInfo_id},
+            #{dicDetail_id},
+            #{user_id},
+            #{faultDate},
+            #{des}
+        )
+    </insert>
+
+
+</mapper>

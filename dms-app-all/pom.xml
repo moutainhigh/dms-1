@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>dms</artifactId>
+        <groupId>com.bzdgs</groupId>
+        <version>${dms.version}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dms-app-all</artifactId>
+    <packaging>jar</packaging>
+
+    <name>dms-app-all</name>
+    <description>打包所有运行模块</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-mapper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-auth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-lucene</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.bzdgs</groupId>
+            <artifactId>dms-web-controller</artifactId>
+        </dependency>
+    </dependencies>
+    <!--  以文件夹形式加载lib补丁升级包方式打包  第二版升级该方式 开始  -->
+    <build>
+        <!--打包后的项目名称-->
+        <finalName>dms-app-all</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.bzdgs.Application</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
+
+
+</project>

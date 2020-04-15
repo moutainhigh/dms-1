@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bzdgs.dms.mapper.MenuMapper">
+
+
+
+    <select id="findByUser" resultType="com.bzdgs.dms.domain.Menu">
+        SELECT m.id,m.name,m2.name  FROM t_menu m JOIN t_menu m2 ON m.parent_id = m2.id;
+    </select>
+
+
+    <resultMap id="menuMap" type="com.bzdgs.dms.domain.Menu">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="url" column="url" />
+        <result property="icon" column="icon" />
+        <result property="component" column="component" />
+        <collection property="children" ofType="com.bzdgs.dms.domain.Menu">
+            <id property="id" column="mid" />
+            <result property="name" column="mname" />
+            <result property="icon" column="micon" />
+            <result property="url" column="murl" />
+            <result property="component" column="mcomponent" />
+        </collection>
+    </resultMap>
+
+    <select id="getMenuByUserId" resultMap="menuMap">
+      SELECT
+        m.id mid,
+        m.`name` mname,
+        m.icon micon,
+        m.url murl,
+        m.component mcomponent,
+        m1.*
+        FROM
+        t_user u
+        LEFT JOIN t_user_role ur ON u.id = ur.user_id
+        LEFT JOIN t_role r ON r.id = ur.role_id
+        LEFT JOIN t_role_permission rp ON rp.role_id = r.id
+        LEFT JOIN t_permission p ON p.id = rp.permission_id
+        LEFT JOIN t_menu m ON p.menu_id = m.id
+        LEFT JOIN t_menu m1 ON m.parent_id = m1.id
+        WHERE u.id = #{id}
+        ORDER BY m1.id
+    </select>
+
+
+</mapper>

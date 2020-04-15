@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.RetrieveDocMapper">
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.RetrieveDoc">
+        SELECT * FROM t_retrieveDoc
+    </select>
+    <select id="selectById" resultType="com.bzdgs.dms.domain.RetrieveDoc" parameterType="long">
+        SELECT * FROM t_retrieveDoc WHERE id = #{id}
+    </select>
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_retrieveDoc
+        <include refid="wheresql"/>
+    </select>
+
+    <resultMap id="retrieveDocMap" type="com.bzdgs.dms.domain.RetrieveDoc">
+        <result column="did" property="docInfo.id"></result>
+        <result column="ddocSn" property="docInfo.docSn"></result>
+        <result column="uid" property="user.id"></result>
+        <result column="uusername" property="user.username"></result>
+    </resultMap>
+
+    <select id="selectByQuery" resultMap="retrieveDocMap">
+        SELECT
+        r.*,
+        d.id did,d.docSn ddocSn,
+        u.id uid,u.username uusername
+        FROM
+        t_retrieveDoc r
+        LEFT JOIN t_docInfo d ON r.docInfo_id = d.id
+        LEFT JOIN t_user u ON r.user_id = u.id
+        <include refid="wheresql"/>
+        limit #{start},#{pageSize}
+    </select>
+
+    <sql id="wheresql">
+        <where>
+            <if test="keyword !=null and keyword !=''">
+                and
+                username like concat('%',#{keyword},'%')
+
+            </if>
+        </where>
+    </sql>
+
+    <delete id="deleteById" >
+        DELETE from t_retrieveDoc where id=#{id}
+    </delete>
+
+
+    <update id="updateById">
+        update t_retrieveDoc set
+         docInfo_id=#{docInfo_id},
+         user_id=#{user_id},
+         retrieveDate=#{retrieveDate},
+         des=#{des}
+         WHERE id = #{id}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO t_retrieveDoc (
+            docInfo_id,
+            user_id,
+            retrieveDate,
+            des
+        ) VALUES (
+            #{docInfo_id},
+            #{user_id},
+            #{retrieveDate},
+            #{des}
+        )
+    </insert>
+
+
+</mapper>

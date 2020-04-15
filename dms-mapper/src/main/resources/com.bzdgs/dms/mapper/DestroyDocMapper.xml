@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.DestroyDocMapper">
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.DestroyDoc">
+        SELECT * FROM t_destroyDoc
+    </select>
+    <select id="selectById" resultType="com.bzdgs.dms.domain.DestroyDoc" parameterType="long">
+        SELECT * FROM t_destroyDoc WHERE id = #{id}
+    </select>
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_destroyDoc
+        <include refid="wheresql"/>
+    </select>
+
+    <resultMap id="destroyDocMap" type="com.bzdgs.dms.domain.DestroyDoc">
+        <result column="did" property="docInfo.id"></result>
+        <result column="ddocSn" property="docInfo.docSn"></result>
+        <result column="uid" property="user.id"></result>
+        <result column="uusername" property="user.username"></result>
+        <result column="lid" property="dicDetail.id"></result>
+        <result column="lname" property="dicDetail.name"></result>
+    </resultMap>
+
+    <select id="selectByQuery" resultMap="destroyDocMap">
+        SELECT
+        td.*,
+        d.id did,d.docSn ddocSn,
+        u.id uid,u.username uusername,
+        l.id lid,l.name lname
+        FROM
+        t_destroyDoc td
+        LEFT JOIN t_docInfo d ON td.docInfo_id = d.id
+        LEFT JOIN t_user u ON td.user_id = u.id
+        LEFT JOIN t_dicDetail l ON td.dicDetail_id = l.id
+        <include refid="wheresql"/>
+        limit #{start},#{pageSize}
+    </select>
+
+    <sql id="wheresql">
+        <where>
+            <if test="startDate !=null">
+                AND <![CDATA[ destroyDate >= #{startDate,jdbcType=DATE}]]>
+            </if>
+            <if test="endDate !=null">
+                AND <![CDATA[ destroyDate <= #{endDate,jdbcType=DATE}]]>
+            </if>
+        </where>
+    </sql>
+
+    <delete id="deleteById" >
+        DELETE from t_destroyDoc where id=#{id}
+    </delete>
+
+
+    <update id="updateById">
+        update t_destroyDoc set
+         docInfo_id=#{docInfo_id},
+         user_id=#{user_id},
+         destroyDate=#{destroyDate},
+         dicDetail_id=#{dicDetail_id},
+         des=#{des}
+         WHERE id = #{id}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO t_destroyDoc (
+            docInfo_id,
+            user_id,
+            destroyDate,
+            dicDetail_id,
+            des
+        ) VALUES (
+            #{docInfo_id},
+            #{user_id},
+            #{destroyDate},
+            #{dicDetail_id},
+            #{des}
+        )
+    </insert>
+
+</mapper>

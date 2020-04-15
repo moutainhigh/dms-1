@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.bzdgs.dms.mapper.EmployeeMapper">
+
+    <select id="findAll" resultType="com.bzdgs.dms.domain.Employee">
+        SELECT * FROM employee
+    </select>
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM employee
+        <include refid="wheresql"/>
+    </select>
+
+    <resultMap id="employeeMap" type="com.bzdgs.dms.domain.Employee">
+        <result column="did" property="department.id"></result>
+        <result column="dname" property="department.name"></result>
+    </resultMap>
+
+    <select id="selectByQuery" resultMap="employeeMap">
+
+        SELECT
+            e.*,d.id did,d.name dname
+        FROM
+            employee e
+        LEFT JOIN department d ON e.department_id = d.id
+        <include refid="wheresql"/>
+        limit #{start},#{pageSize}
+
+    </select>
+
+    <sql id="wheresql">
+        <where>
+            <if test="keyword !=null and keyword !=''">
+                and(
+                  username like concat('%',#{keyword},'%')
+                OR
+                  email like concat('%',#{keyword},'%')
+                )
+
+            </if>
+        </where>
+
+    </sql>
+
+    <delete id="removeById" >
+        DELETE from employee where id=#{id}
+    </delete>
+
+
+    <update id="updateById">
+        update employee set
+         username=#{username},
+         password=#{password},
+         email=#{email},
+         headImage=#{headImage},
+         age=#{age},
+         department_id=#{department_id}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO employee (
+            username,
+            password,
+            email,
+            headImage,
+            age,
+            department_id
+        ) VALUES (
+            #{username},
+            #{password},
+            #{email},
+            #{headImage},
+            #{age},
+            #{department_id}
+        )
+    </insert>
+
+
+</mapper>

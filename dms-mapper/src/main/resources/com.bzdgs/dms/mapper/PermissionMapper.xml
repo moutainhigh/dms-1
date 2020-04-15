@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bzdgs.dms.mapper.PermissionMapper">
+
+
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.Permission">
+      SELECT * FROM t_permission
+    </select>
+
+    <select id="count" resultType="long" >
+        SELECT count(*) FROM t_permission
+    </select>
+
+    <select id="selectByQuery" resultType="com.bzdgs.dms.domain.Permission">
+         SELECT
+            p.*,m.id mid,m.name mname
+        FROM
+            t_permission p
+        LEFT JOIN t_menu m ON p.menu_id = m.id
+        limit #{start},#{pageSize}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            INSERT INTO t_permission
+            (
+                name,
+                url,
+                descs,
+                sn,
+                menu_id,
+                status
+            )VALUES
+            (
+                #{name},
+                #{url},
+                #{descs},
+                #{sn},
+                #{menu_id},
+                #{status}
+            )
+    </insert>
+
+    <delete id="deleteById" >
+        DELETE FROM t_permission WHERE id = #{id}
+    </delete>
+
+    <update id="update">
+        UPDATE t_permission SET
+                name=#{name},
+                url=#{url},
+                descs=#{descs},
+                sn=#{sn},
+                menu_id=#{menu_id},
+                status=#{status}
+    </update>
+</mapper>

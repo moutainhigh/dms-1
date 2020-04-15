@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bzdgs.dms.mapper.DepartmentMapper">
+
+    <select id="selectAll" resultMap="deptMap">
+        SELECT d.*,
+        u.realName rn,u.id uid,
+        p.name pname, p.id pid
+        FROM  t_department d LEFT JOIN t_user u ON u.id=d.manager_id
+        LEFT JOIN t_department p on d.parent_id=p.id
+    </select>
+                                 <!-- d.id=p.parent_id ？？？？哪里不一样 -->
+    <resultMap id="deptMap" type="com.bzdgs.dms.domain.Department">
+        <id column="id" property="id"/>
+        <result column="sn" property="sn"/>
+        <result column="name" property="name"/>
+        <result column="phoneNum" property="phoneNum"/>
+        <result column="fax" property="fax"/>
+        <result column="departmentPath" property="departmentPath"/>
+        <result column="parent_id" property="parent_id"/>
+        <result column="manager_id" property="manager_id"/>
+        <result column="comment" property="comment"/>
+        <result column="state" property="state"/>
+
+
+        <association property="parent" javaType="com.bzdgs.dms.domain.Department">
+            <id column="pid" property="id"/>
+            <result column="pname" property="name"/>
+        </association>
+
+        <association property="manager" javaType="com.bzdgs.dms.domain.User">
+            <id column="uid" property="id"/>
+            <result column="rn" property="realName"/>
+        </association>
+    </resultMap>
+
+    <delete id="deleteById">
+        DELETE FROM t_department where id = #{id}
+    </delete>
+
+    <insert id="insert">
+    insert into t_department (sn,name,phoneNum,fax,departmentPath,parent_id,manager_id,comment,state)
+    values (#{sn},#{name},#{phoneNum},#{fax},#{departmentPath},#{parent_id},#{manager_id},#{comment},#{state})
+    </insert>
+
+    <update id="update">
+        UPDATE t_department SET sn=#{sn},name=#{name},phoneNum=#{phoneNum},fax=#{fax},
+        departmentPath=#{departmentPath},parent_id=#{parent_id},manager_id=#{manager_id},
+        comment=#{comment},state=#{state}
+        where id=#{id}
+    </update>
+</mapper>

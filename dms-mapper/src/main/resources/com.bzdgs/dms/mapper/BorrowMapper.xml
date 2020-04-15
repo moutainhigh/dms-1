@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.bzdgs.dms.mapper.BorrowMapper">
+    <insert id="insert" parameterType="com.bzdgs.dms.domain.Borrow" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO t_borrow(
+        sn,
+        userName,
+        operationId,
+        returnTime,
+        borrowTime,
+        decs,
+        status
+      ) VALUES (
+        #{sn},
+        #{userName},
+        #{operationId},
+        #{returnTime},
+        #{borrowTime},
+        #{decs},
+        #{status}
+      )
+    </insert>
+
+    <resultMap id="borrowMap" type="com.bzdgs.dms.domain.Borrow">
+      <id column="id" property="id"></id>
+      <result column="userName" property="userName"></result>
+      <result column="operationId" property="operationId"></result>
+      <result column="borrowTime" property="borrowTime"></result>
+      <result column="returnTime" property="returnTime"></result>
+      <result column="decs" property="decs"></result>
+      <result column="status" property="status"></result>
+      <result column="sn" property="sn"></result>
+      <collection property="docs" ofType="com.bzdgs.dms.domain.Docinfo">
+          <id column="did" property="id" />
+          <result column="docTitle" property="docTitle"/>
+      </collection>
+    </resultMap>
+
+    <select id="selectAll" resultMap="borrowMap">
+      SELECT
+        d1.docTitle,
+        b1.*
+    FROM
+        t_docInfo d1,
+        t_borrow b1,
+        t_doc_return_borrow t2
+    WHERE
+        d1.id IN (
+            SELECT
+                t.docId
+            FROM
+                t_doc_return_borrow t
+            LEFT JOIN t_borrow b ON t.borrowId = b.id
+            WHERE
+                t.returnId IS NULL
+        )
+    AND t2.borrowId = b1.id
+    AND t2.docId = d1.id
+    </select>
+
+    <!-- 根据 sn查询 借阅 id -->
+    <select id="selectBid" resultType="long">
+        SELECT id FROM  t_borrow WHERE sn = #{sn}
+    </select>
+
+    <select id="selectPage" resultMap="borrowMap">
+        SELECT
+        d1.docTitle,d1.id did,b1.*
+        FROM
+        t_docInfo d1,t_borrow b1
+        WHERE
+        d1.id IN (
+        SELECT
+        t.docId
+        FROM
+        t_doc_return_borrow t
+        LEFT JOIN t_borrow b ON t.borrowId = b.id
+        WHERE t.returnId IS NULL
+        AND b.id = #{bid}
+        )
+      <include refid="whereSql"></include>
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM
+        t_docInfo d1,t_borrow b1
+        WHERE
+        d1.id IN (
+        SELECT
+        t.docId
+        FROM
+        t_doc_return_borrow t
+        LEFT JOIN t_borrow b ON t.borrowId = b.id
+        WHERE t.returnId IS NULL
+        AND b.id = #{bid}
+        )
+        <include refid="whereSql"></include>
+    </select>
+
+    <sql id="whereSql">
+        <if test="keyword != null and keyword != ''">
+            AND b1.userName LIKE #{keyword}
+        </if>
+        <if test="sn != null and sn != ''">
+            AND b1.sn = #{sn}
+        </if>
+        <if test="timeRange != null and timeRange != ''">
+            AND b1.borrowTime > #{timeRange}
+        </if>
+    </sql>
+
+    <delete id="deleteById" >
+        DELETE FROM t_borrow WHERE id=#{id}
+    </delete>
+
+    <!-- 用于  借阅归还查询-->
+    <resultMap id="searchMap" type="com.bzdgs.dms.domain.Borrow">
+        <id column="id" property="id"></id>
+        <result column="userName" property="userName"></result>
+        <result column="operationId" property="operationId"></result>
+        <result column="borrowTime" property="borrowTime"></result>
+        <result column="returnTime" property="returnTime"></result>
+        <result column="decs" property="decs"></result>
+        <result column="status" property="status"></result>
+        <result column="sn" property="sn"></result>
+        <result column="returnId" property="returnId"/>
+        <collection property="docs" column="docId" select="selectDoc"/>
+    </resultMap>
+
+    <select id="selectForSearch" resultMap="searchMap">
+        SELECT b.*,t.docId,t.returnId FROM t_borrow b LEFT  JOIN t_doc_return_borrow t
+        ON t.borrowId = b.id
+        <where>
+            <if test="timeRange != null and timeRange != ''">
+                AND TO_DAYS(NOW()) - TO_DAYS(b.borrowTime) &lt;= #{timeRange}
+            </if>
+        </where>
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="selectSearchCount" resultType="java.lang.Long">
+        SELECT count(*) FROM t_borrow b LEFT  JOIN t_doc_return_borrow t
+        ON t.borrowId = b.id
+        <where>
+            <if test="timeRange != null and timeRange != ''">
+                AND TO_DAYS(NOW()) - TO_DAYS(b.borrowTime) &lt;= #{timeRange}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询文件类型 及  档案信息 展示给 借阅归还查询页面-->
+    <select id="selectDoc" resultType="com.bzdgs.dms.domain.Docinfo">
+        SELECT d1.*,d2.name AS doctypeName FROM  t_docInfo d1 LEFT JOIN t_doctype d2 ON d1.docType_id = d2.id WHERE d1.id=#{id}
+    </select>
+
+    <!-- 到期查询的 SQL -->
+    <select id="selectForExpired" resultMap="searchMap">
+        SELECT b.*,t.docId FROM t_borrow b
+        LEFT JOIN t_doc_return_borrow t ON
+        b.id = t.borrowId
+        <include refid="expiredSql" />
+    </select>
+
+    <select id="selectForExpiredCount" resultType="java.lang.Long">
+        SELECT count(*) FROM t_borrow b
+        LEFT JOIN t_doc_return_borrow t ON
+        b.id = t.borrowId
+        <include refid="expiredSql" />
+    </select>
+
+    <sql id="expiredSql">
+      <where>
+          t.returnId IS NULL
+          <if test="expiredTime != null and expiredTime != ''">
+              AND  TO_DAYS(b.returnTime) - TO_DAYS(NOW()) &lt;= #{expiredTime}
+          </if>
+      </where>
+    </sql>
+
+</mapper>
