@@ -18,7 +18,6 @@ import org.springframework.core.Ordered;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.Filter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
