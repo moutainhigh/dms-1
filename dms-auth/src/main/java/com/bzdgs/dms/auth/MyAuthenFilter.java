@@ -50,8 +50,7 @@ public class MyAuthenFilter extends FormAuthenticationFilter {
         String origin = request.getHeader("Origin");
         if("http://localhost:6001".equalsIgnoreCase(origin)
                 ||"http://127.0.0.1:6001".equalsIgnoreCase(origin)
-                ||"http://127.0.0.1:8080".equalsIgnoreCase(origin)
-                ||"http://49.232.165.185".equalsIgnoreCase(origin)){
+                ||"http://127.0.0.1:8080".equalsIgnoreCase(origin)){
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
         // 这个allow-headers要配为*，这样才能允许所有的请求头

@@ -10,6 +10,9 @@ import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
 
+/**
+ * @author YCWB0118
+ */
 public class MySessionManager extends DefaultWebSessionManager {
 
     private String AUTHORIZATION = "SESSIONID";

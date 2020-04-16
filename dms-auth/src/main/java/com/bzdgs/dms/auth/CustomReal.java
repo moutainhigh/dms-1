@@ -11,7 +11,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class CrmReal extends AuthorizingRealm {
+public class CustomReal extends AuthorizingRealm {
 
 
     @Autowired
