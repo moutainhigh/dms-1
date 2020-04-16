@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: BeLost_
@@ -36,5 +39,15 @@ public class PermissionServiceImpl extends BaseServiceImpl<Permission> implement
         Long total = permissionMapper.count(query);
         List<Permission> rows = permissionMapper.selectByQuery(query);
         return new PageList<>(total,rows);
+    }
+
+    @Override
+    public Set<String> findPermissionsByEmployeeId(Serializable id) {
+        List<Permission> list = permissionMapper.findPermissionsByEmployeeId(id);
+        Set<String> permissions = new HashSet<>();
+        for (Permission p : list) {
+            permissions.add(p.getSn());
+        }
+        return permissions;
     }
 }

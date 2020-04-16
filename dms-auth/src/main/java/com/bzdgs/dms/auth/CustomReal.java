@@ -1,14 +1,21 @@
 package com.bzdgs.dms.auth;
 
+import com.bzdgs.dms.domain.Employee;
 import com.bzdgs.dms.domain.User;
+import com.bzdgs.dms.service.IPermissionService;
 import com.bzdgs.dms.service.IUserService;
+import com.bzdgs.dms.service.impl.PermissionServiceImpl;
 import com.bzdgs.dms.tool.MD5Util;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.jnlp.PersistenceService;
+import java.util.Set;
 
 
 public class CustomReal extends AuthorizingRealm {
@@ -17,6 +24,9 @@ public class CustomReal extends AuthorizingRealm {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private IPermissionService permissionService;
+
     /**
      * 授权  权限判断
      * @param principalCollection
@@ -24,7 +34,21 @@ public class CustomReal extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        return null;
+        //获取身份认证成功之后的主体对象
+        Employee employee = (Employee) principalCollection.getPrimaryPrincipal();
+
+        //Employee employee = (Employee) SecurityUtils.getSubject().getPrincipal();
+
+        //获取用户id
+        Long id = employee.getId();
+
+        //通过用户id去查询该用户拥有哪些权限
+        Set<String> permissions = permissionService.findPermissionsByEmployeeId(id);
+        //创建一个SimpleAuthorizationInfo对象
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        //将通过用户id查询到的他拥有的那些权限授权给当前用户
+        authorizationInfo.setStringPermissions(permissions);
+        return authorizationInfo;
     }
 
     /**

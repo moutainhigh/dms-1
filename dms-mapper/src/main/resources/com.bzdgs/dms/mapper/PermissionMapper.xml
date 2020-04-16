@@ -20,6 +20,13 @@
         LEFT JOIN t_menu m ON p.menu_id = m.id
         limit #{start},#{pageSize}
     </select>
+    <select id="findPermissionsByEmployeeId" resultType="com.bzdgs.dms.domain.Permission">
+        select * from t_user u
+        join t_user_roles ur on u.id = ur.user_id
+        join t_roles_permission rp on ur.roles_id = rp.permission_id
+        join t_permission p on rp.permission_id = p.id
+        where user.id=#{id}
+    </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             INSERT INTO t_permission
