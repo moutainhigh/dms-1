@@ -1,7 +1,10 @@
 package com.bzdgs.dms.mapper;
 
 import com.bzdgs.dms.domain.Docaddress;
+import com.bzdgs.dms.query.DocAddressQuery;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @Author: Liuqi
@@ -12,4 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DocaddressMapper extends BaseMapper<Docaddress> {
 
+    List<Docaddress> selectAllByQuery(DocAddressQuery addressQuery);
 }

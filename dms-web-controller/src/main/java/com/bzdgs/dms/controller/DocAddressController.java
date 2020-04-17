@@ -1,6 +1,7 @@
 package com.bzdgs.dms.controller;
 
 import com.bzdgs.dms.domain.Docaddress;
+import com.bzdgs.dms.query.DocAddressQuery;
 import com.bzdgs.dms.service.IDocaddressService;
 import com.bzdgs.dms.util.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class DocAddressController {
     @Autowired
     private IDocaddressService docaddressService;
 
-    @GetMapping("/list")
-    public List<Docaddress> selectIDType(){
-        return docaddressService.selectAll();
+    @PostMapping("/list")
+    public List<Docaddress> selectIDType(@RequestBody DocAddressQuery addressQuery){
+        return docaddressService.selectAllByQuery(addressQuery);
     }
 
 

@@ -6,6 +6,7 @@ import com.bzdgs.dms.auth.MyAuthenFilter;
 import com.bzdgs.dms.auth.MySessionManager;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -23,6 +24,12 @@ import java.util.Map;
 
 @Configuration
 public class ShiroConfig  {
+
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+        return new LifecycleBeanPostProcessor();
+    }
+
     /**
      * @ConditionalOnMissingBean 如果容器中不存在 DefaultAdvisorAutoProxyCreator，则创建一个交给容器
      * @return
@@ -67,7 +74,7 @@ public class ShiroConfig  {
      * 配置自定义Realm到安全管理器
      * @return
      */
-    @Bean
+    @Bean("securityManager")
     public SecurityManager securityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(getCustomRealm());
@@ -76,24 +83,19 @@ public class ShiroConfig  {
     }
 
     @Bean
-    public MyAuthenFilter getAuthenFilter(){
-        return new MyAuthenFilter();
-    }
-
-    @Bean
     public FilterChainDefinitionMapFactory  getFilterChainDefinitionMapFactory(){
         return new FilterChainDefinitionMapFactory();
     }
     /**
      * 配置过滤器
-     * @param securityManager
+     * @param
      * @return
      */
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         //配置securityManager
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        shiroFilterFactoryBean.setSecurityManager(securityManager());
         //配置过滤map
         FilterChainDefinitionMapFactory factory = getFilterChainDefinitionMapFactory();
         Map<String, String> map = factory.getMap();
@@ -102,8 +104,12 @@ public class ShiroConfig  {
         Map<String, Filter> filterMap = new LinkedHashMap<>();
         filterMap.put("myAuth",getAuthenFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
-        System.out.println("Shiro拦截器工厂类注入成功");
         return shiroFilterFactoryBean;
+    }
+
+    @Bean
+    public MyAuthenFilter getAuthenFilter(){
+        return new MyAuthenFilter();
     }
 
     @Bean
@@ -113,21 +119,7 @@ public class ShiroConfig  {
         return authorizationAttributeSourceAdvisor;
     }
 
-    @Bean
-    public DelegatingFilterProxy getDelegatingFilterProxy(){
-        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy(getAuthenFilter());
-        delegatingFilterProxy.setTargetFilterLifecycle(true);
-        delegatingFilterProxy.setTargetBeanName("shiroFilter");
-        return delegatingFilterProxy;
-    }
 
-    @Bean
-    public FilterRegistrationBean delegatingFilterProxy(){
-        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(getDelegatingFilterProxy());
-        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return filterRegistrationBean;
-    }
 
 
 }

@@ -40,16 +40,16 @@
 
     <select id="selectAll" resultMap="borrowMap">
       SELECT
-        d1.docTitle,
+        d1.doctitle,
         b1.*
     FROM
-        t_docInfo d1,
+        t_docinfo d1,
         t_borrow b1,
         t_doc_return_borrow t2
     WHERE
         d1.id IN (
             SELECT
-                t.docId
+                t.docid
             FROM
                 t_doc_return_borrow t
             LEFT JOIN t_borrow b ON t.borrowId = b.id
@@ -69,7 +69,7 @@
         SELECT
         d1.docTitle,d1.id did,b1.*
         FROM
-        t_docInfo d1,t_borrow b1
+        t_docinfo d1,t_borrow b1
         WHERE
         d1.id IN (
         SELECT
@@ -88,7 +88,7 @@
         SELECT
         count(*)
         FROM
-        t_docInfo d1,t_borrow b1
+        t_docinfo d1,t_borrow b1
         WHERE
         d1.id IN (
         SELECT
@@ -155,27 +155,27 @@
 
     <!-- 查询文件类型 及  档案信息 展示给 借阅归还查询页面-->
     <select id="selectDoc" resultType="com.bzdgs.dms.domain.Docinfo">
-        SELECT d1.*,d2.name AS doctypeName FROM  t_docInfo d1 LEFT JOIN t_doctype d2 ON d1.docType_id = d2.id WHERE d1.id=#{id}
+        SELECT d1.*,d2.name AS doctypeName FROM  t_docinfo d1 LEFT JOIN t_doctype d2 ON d1.doctype_id = d2.id WHERE d1.id=#{id}
     </select>
 
     <!-- 到期查询的 SQL -->
     <select id="selectForExpired" resultMap="searchMap">
-        SELECT b.*,t.docId FROM t_borrow b
+        SELECT b.*,t.docid FROM t_borrow b
         LEFT JOIN t_doc_return_borrow t ON
-        b.id = t.borrowId
+        b.id = t.borrowid
         <include refid="expiredSql" />
     </select>
 
     <select id="selectForExpiredCount" resultType="java.lang.Long">
         SELECT count(*) FROM t_borrow b
         LEFT JOIN t_doc_return_borrow t ON
-        b.id = t.borrowId
+        b.id = t.borrowid
         <include refid="expiredSql" />
     </select>
 
     <sql id="expiredSql">
       <where>
-          t.returnId IS NULL
+          t.returnid IS NULL
           <if test="expiredTime != null and expiredTime != ''">
               AND  TO_DAYS(b.returnTime) - TO_DAYS(NOW()) &lt;= #{expiredTime}
           </if>

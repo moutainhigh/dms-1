@@ -4,7 +4,6 @@ import com.bzdgs.dms.domain.Employee;
 import com.bzdgs.dms.domain.User;
 import com.bzdgs.dms.service.IPermissionService;
 import com.bzdgs.dms.service.IUserService;
-import com.bzdgs.dms.service.impl.PermissionServiceImpl;
 import com.bzdgs.dms.tool.MD5Util;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -14,7 +13,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.jnlp.PersistenceService;
 import java.util.Set;
 
 

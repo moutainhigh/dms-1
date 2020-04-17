@@ -3,40 +3,40 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.bzdgs.dms.mapper.DestroyDocMapper">
+<mapper namespace="com.bzdgs.dms.mapper.FaultDocMapper">
 
-    <select id="selectAll" resultType="com.bzdgs.dms.domain.DestroyDoc">
-        SELECT * FROM t_destroyDoc
+    <select id="selectAll" resultType="com.bzdgs.dms.domain.FaultDoc">
+        SELECT * FROM t_faultdoc
     </select>
-    <select id="selectById" resultType="com.bzdgs.dms.domain.DestroyDoc" parameterType="long">
-        SELECT * FROM t_destroyDoc WHERE id = #{id}
+    <select id="selectById" resultType="com.bzdgs.dms.domain.FaultDoc" parameterType="long">
+        SELECT * FROM t_faultdoc WHERE id = #{id}
     </select>
 
     <select id="count" resultType="long" >
-        SELECT count(*) FROM t_destroyDoc
+        SELECT count(*) FROM t_faultdoc
         <include refid="wheresql"/>
     </select>
 
-    <resultMap id="destroyDocMap" type="com.bzdgs.dms.domain.DestroyDoc">
+    <resultMap id="faultDocMap" type="com.bzdgs.dms.domain.FaultDoc">
         <result column="did" property="docInfo.id"></result>
         <result column="ddocSn" property="docInfo.docSn"></result>
         <result column="uid" property="user.id"></result>
         <result column="uusername" property="user.username"></result>
-        <result column="lid" property="dicDetail.id"></result>
-        <result column="lname" property="dicDetail.name"></result>
+        <result column="cid" property="dicDetail.id"></result>
+        <result column="cname" property="dicDetail.name"></result>
     </resultMap>
 
-    <select id="selectByQuery" resultMap="destroyDocMap">
+    <select id="selectByQuery" resultMap="faultDocMap">
         SELECT
         td.*,
         d.id did,d.docSn ddocSn,
         u.id uid,u.username uusername,
-        l.id lid,l.name lname
+        c.id cid,c.name cname
         FROM
-        t_destroyDoc td
-        LEFT JOIN t_docInfo d ON td.docInfo_id = d.id
+        t_faultdoc td
+        LEFT JOIN t_docinfo d ON td.docinfo_id = d.id
         LEFT JOIN t_user u ON td.user_id = u.id
-        LEFT JOIN t_dicDetail l ON td.dicDetail_id = l.id
+        LEFT JOIN t_dicdetail c ON td.dicdetail_id = c.id
         <include refid="wheresql"/>
         limit #{start},#{pageSize}
     </select>
@@ -44,43 +44,47 @@
     <sql id="wheresql">
         <where>
             <if test="startDate !=null">
-                AND <![CDATA[ destroyDate >= #{startDate,jdbcType=DATE}]]>
+                AND <![CDATA[ faultDate >= #{startDate,jdbcType=DATE}]]>
             </if>
             <if test="endDate !=null">
-                AND <![CDATA[ destroyDate <= #{endDate,jdbcType=DATE}]]>
+                AND <![CDATA[ faultDate <= #{endDate,jdbcType=DATE}]]>
+            </if>
+            <if test="dicDetail_id !=null">
+                AND dicDetail_id = #{dicDetail_id}
             </if>
         </where>
     </sql>
 
     <delete id="deleteById" >
-        DELETE from t_destroyDoc where id=#{id}
+        DELETE from t_faultdoc where id=#{id}
     </delete>
 
 
     <update id="updateById">
-        update t_destroyDoc set
+        update t_faultdoc set
          docInfo_id=#{docInfo_id},
-         user_id=#{user_id},
-         destroyDate=#{destroyDate},
          dicDetail_id=#{dicDetail_id},
+         user_id=#{user_id},
+         faultDate=#{faultDate},
          des=#{des}
          WHERE id = #{id}
     </update>
 
     <insert id="insert">
-        INSERT INTO t_destroyDoc (
+        INSERT INTO t_faultdoc (
             docInfo_id,
-            user_id,
-            destroyDate,
             dicDetail_id,
+            user_id,
+            faultDate,
             des
         ) VALUES (
             #{docInfo_id},
-            #{user_id},
-            #{destroyDate},
             #{dicDetail_id},
+            #{user_id},
+            #{faultDate},
             #{des}
         )
     </insert>
+
 
 </mapper>

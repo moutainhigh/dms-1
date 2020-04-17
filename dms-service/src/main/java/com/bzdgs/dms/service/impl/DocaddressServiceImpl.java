@@ -3,11 +3,14 @@ package com.bzdgs.dms.service.impl;
 import com.bzdgs.dms.domain.Docaddress;
 import com.bzdgs.dms.mapper.BaseMapper;
 import com.bzdgs.dms.mapper.DocaddressMapper;
+import com.bzdgs.dms.query.DocAddressQuery;
 import com.bzdgs.dms.service.IDocaddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @Author: Liuqi
@@ -25,5 +28,10 @@ public class DocaddressServiceImpl extends BaseServiceImpl<Docaddress> implement
     @Override
     protected BaseMapper<Docaddress> getMapper() {
         return docaddressMapper;
+    }
+
+    @Override
+    public List<Docaddress> selectAllByQuery(DocAddressQuery addressQuery) {
+        return docaddressMapper.selectAllByQuery(addressQuery);
     }
 }

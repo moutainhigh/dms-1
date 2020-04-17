@@ -5,7 +5,7 @@
 <mapper namespace="com.bzdgs.dms.mapper.BorrowUserMapper">
 
   <insert id="insert" parameterType="com.bzdgs.dms.domain.BorrowUser">
-    INSERT INTO t_borrowUser(
+    INSERT INTO t_borrowuser(
         userName,
         borrow_id,
         tel,
@@ -22,7 +22,7 @@
 
 
     <select id="selectByName" resultType="com.bzdgs.dms.domain.BorrowUser">
-      SELECT * FROM t_borrowUser WHERE userName = #{userName}
+      SELECT * FROM t_borrowuser WHERE userName = #{userName}
     </select>
 
 </mapper>

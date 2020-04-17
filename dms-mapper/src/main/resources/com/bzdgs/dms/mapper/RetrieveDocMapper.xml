@@ -6,14 +6,14 @@
 <mapper namespace="com.bzdgs.dms.mapper.RetrieveDocMapper">
 
     <select id="selectAll" resultType="com.bzdgs.dms.domain.RetrieveDoc">
-        SELECT * FROM t_retrieveDoc
+        SELECT * FROM t_retrievedoc
     </select>
     <select id="selectById" resultType="com.bzdgs.dms.domain.RetrieveDoc" parameterType="long">
-        SELECT * FROM t_retrieveDoc WHERE id = #{id}
+        SELECT * FROM t_retrievedoc WHERE id = #{id}
     </select>
 
     <select id="count" resultType="long" >
-        SELECT count(*) FROM t_retrieveDoc
+        SELECT count(*) FROM t_retrievedoc
         <include refid="wheresql"/>
     </select>
 
@@ -30,8 +30,8 @@
         d.id did,d.docSn ddocSn,
         u.id uid,u.username uusername
         FROM
-        t_retrieveDoc r
-        LEFT JOIN t_docInfo d ON r.docInfo_id = d.id
+        t_retrievedoc r
+        LEFT JOIN t_docinfo d ON r.docinfo_id = d.id
         LEFT JOIN t_user u ON r.user_id = u.id
         <include refid="wheresql"/>
         limit #{start},#{pageSize}
@@ -48,12 +48,12 @@
     </sql>
 
     <delete id="deleteById" >
-        DELETE from t_retrieveDoc where id=#{id}
+        DELETE from t_retrievedoc where id=#{id}
     </delete>
 
 
     <update id="updateById">
-        update t_retrieveDoc set
+        update t_retrievedoc set
          docInfo_id=#{docInfo_id},
          user_id=#{user_id},
          retrieveDate=#{retrieveDate},
@@ -62,7 +62,7 @@
     </update>
 
     <insert id="insert">
-        INSERT INTO t_retrieveDoc (
+        INSERT INTO t_retrievedoc (
             docInfo_id,
             user_id,
             retrieveDate,

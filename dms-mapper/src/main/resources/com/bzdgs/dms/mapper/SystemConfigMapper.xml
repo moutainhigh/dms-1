@@ -3,20 +3,20 @@
 <mapper namespace="com.bzdgs.dms.mapper.SystemConfigMapper">
 
     <select id="selectAll" resultType="com.bzdgs.dms.domain.SystemConfig">
-        SELECT * from t_systemConfig
+        SELECT * from t_systemconfig
     </select>
 
     <delete id="deleteById">
-        DELETE FROM  t_systemConfig where id = #{id}
+        DELETE FROM  t_systemconfig where id = #{id}
     </delete>
 
     <insert id="insert">
-    insert into  t_systemConfig (systemName,companyName,companyTel,companyFax,companyAddress,companyURL)
+    insert into  t_systemconfig (systemName,companyName,companyTel,companyFax,companyAddress,companyURL)
     values (#{systemName},#{companyName},#{companyTel},#{companyFax},#{companyAddress},#{companyURL})
     </insert>
 
     <update id="update">
-        UPDATE  t_systemConfig SET systemName=#{systemName},companyName=#{companyName},companyTel=#{companyTel},
+        UPDATE  t_systemconfig SET systemName=#{systemName},companyName=#{companyName},companyTel=#{companyTel},
         companyFax=#{companyFax},companyAddress=#{companyAddress},companyURL=#{companyURL}
         where id=#{id}
     </update>
