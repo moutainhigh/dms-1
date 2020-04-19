@@ -18,19 +18,13 @@ import javax.servlet.Filter;
  */
 @Configuration
 public class WebConfig {
-
-    @Bean
-    @ConditionalOnMissingBean
-    public MyAuthenFilter getAuthenFilter(){
-        return new MyAuthenFilter();
-    }
     /**
      * 注册shiro代理过滤器
      * @return
      */
     @Bean
     public DelegatingFilterProxy getDelegatingFilterProxy(){
-        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy(getAuthenFilter());
+        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy(new MyAuthenFilter());
         delegatingFilterProxy.setTargetFilterLifecycle(true);
         delegatingFilterProxy.setTargetBeanName("shiroFilter");
         return delegatingFilterProxy;
