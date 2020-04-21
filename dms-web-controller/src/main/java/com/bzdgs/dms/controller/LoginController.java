@@ -1,6 +1,5 @@
 package com.bzdgs.dms.controller;
 
-import com.bzdgs.dms.auth.UserContext;
 import com.bzdgs.dms.domain.Menu;
 import com.bzdgs.dms.domain.User;
 import com.bzdgs.dms.service.IMenuService;
