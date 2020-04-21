@@ -25,5 +25,9 @@ public class Menu {
 
     private String component;
 
+    private Integer status;
+
+    private String remark;
+
     private List<Menu> children = new ArrayList<>();
 }

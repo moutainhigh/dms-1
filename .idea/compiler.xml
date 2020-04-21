@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="dms-util" />
+        <module name="dms-core" />
+        <module name="dms-service" />
+        <module name="dms-web-controller" />
+        <module name="dms-lucene" />
+        <module name="dms-mapper" />
+        <module name="dms-common" />
+        <module name="dms-auth" />
+        <module name="dms-app-all" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dms" target="1.8" />
+      <module name="dms-app-all" target="1.8" />
+      <module name="dms-auth" target="1.8" />
+      <module name="dms-common" target="1.8" />
+      <module name="dms-core" target="1.8" />
+      <module name="dms-lucene" target="1.8" />
+      <module name="dms-mapper" target="1.8" />
+      <module name="dms-service" target="1.8" />
+      <module name="dms-util" target="1.8" />
+      <module name="dms-web-controller" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

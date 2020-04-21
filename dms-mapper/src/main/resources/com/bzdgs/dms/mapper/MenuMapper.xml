@@ -44,6 +44,18 @@
         WHERE u.id = #{id}
         ORDER BY m1.id
     </select>
+    <select id="couont" resultType="java.lang.Long">
+        select count(1) from t_menu
+    </select>
+    <select id="listByQuery" resultType="com.bzdgs.dms.domain.Menu">
+        select * from t_menu
+        <where>
+            <if test="keyword != null and keyword != ''">
+                name like concat('%',#{keyword},''%'')
+            </if>
+        </where>
+        limit #{start},#{pageSize}
+    </select>
 
 
 </mapper>

@@ -3,7 +3,9 @@ package com.bzdgs.dms.service.impl;
 import com.bzdgs.dms.domain.Menu;
 import com.bzdgs.dms.mapper.BaseMapper;
 import com.bzdgs.dms.mapper.MenuMapper;
+import com.bzdgs.dms.query.MenuQuery;
 import com.bzdgs.dms.service.IMenuService;
+import com.bzdgs.dms.util.PageList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,5 +38,15 @@ public class MeunServicImpl extends BaseServiceImpl<Menu> implements IMenuServic
     @Override
     public List<Menu> getMenuByUserId(Long id) {
         return menuMapper.getMenuByUserId(id);
+    }
+
+    @Override
+    public PageList<Menu> page(MenuQuery menuQuery) {
+        PageList<Menu> pageList = new PageList<>();
+        Long couont = menuMapper.couont();
+        List<Menu> menus = menuMapper.listByQuery(menuQuery);
+        pageList.setTotal(couont);
+        pageList.setRows(menus);
+        return pageList;
     }
 }

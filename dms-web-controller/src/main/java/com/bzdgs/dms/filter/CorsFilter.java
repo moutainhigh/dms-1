@@ -29,9 +29,8 @@ public class CorsFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String origin = req.getHeader("Origin");
 
-        if("http://localhost:6001".equalsIgnoreCase(origin)
-                ||"http://127.0.0.1:6001".equalsIgnoreCase(origin)
-                ||"http://127.0.0.1:8080".equalsIgnoreCase(origin)){
+        if("http://localhost".equalsIgnoreCase(origin)
+                ||"http://127.0.0.1".equalsIgnoreCase(origin)){
             response.setHeader("Access-Control-Allow-Origin", origin);
 
         }

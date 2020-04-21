@@ -1,5 +1,14 @@
 package com.bzdgs.dms.controller;
 
+import com.bzdgs.dms.domain.Menu;
+import com.bzdgs.dms.query.MenuQuery;
+import com.bzdgs.dms.service.IMenuService;
+import com.bzdgs.dms.util.AjaxResult;
+import com.bzdgs.dms.util.PageList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -9,6 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version : v1.0
  */
 @RestController
+@RequestMapping("/menu")
 public class MenuController {
+
+    @Autowired
+    private IMenuService menuService;
+
+    @PostMapping("/list")
+    public AjaxResult list(@RequestBody MenuQuery menuQuery){
+        PageList<Menu> pageList = menuService.page(menuQuery);
+        return AjaxResult.me().setResobj(pageList);
+    }
 
 }
